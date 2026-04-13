@@ -7,22 +7,33 @@ import 'package:flutter/rendering.dart';
 
 import '../models/poster_export_result.dart';
 
-/// Captures a [RepaintBoundary] and returns PNG bytes.
+/// Captures a [RepaintBoundary] identified by [exportKey] and returns PNG bytes.
 ///
-/// ### Basic usage
 /// ```dart
 /// final exportKey = GlobalKey();
-/// PosterCanvas(config: myConfig, exportKey: exportKey)
 ///
+/// // In your widget tree:
+/// PosterCanvas(controller: ctrl, exportKey: exportKey)
+///
+/// // To export:
 /// final result = await PosterExporter.export(exportKey);
 /// if (result != null) {
-///   await Gal.putImageBytes(result.bytes);
+///   await Gal.putImageBytes(result.bytes); // save to gallery
+///   // or
+///   await Share.shareXFiles([XFile(filePath)]);
 /// }
 /// ```
 class PosterExporter {
   PosterExporter._();
 
-  /// Export as PNG bytes. [pixelRatio] defaults to 3.0.
+  /// Export the canvas as PNG bytes.
+  ///
+  /// [pixelRatio] controls output resolution:
+  /// - 2.0 = 2× device pixels (good for sharing)
+  /// - 3.0 = 3× device pixels (default, high quality)
+  /// - 4.0 = 4× device pixels (print quality)
+  ///
+  /// Returns null if the RepaintBoundary is not found or rendering fails.
   static Future<PosterExportResult?> export(
     GlobalKey key, {
     double pixelRatio = 3.0,
@@ -31,13 +42,15 @@ class PosterExporter {
       final boundary =
           key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) {
-        debugPrint('[PosterExporter] RenderRepaintBoundary not found.');
+        debugPrint('[PosterExporter] RepaintBoundary not found for key.');
         return null;
       }
+
       final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
       final ByteData? data =
           await image.toByteData(format: ui.ImageByteFormat.png);
       if (data == null) return null;
+
       return PosterExportResult(
         bytes: data.buffer.asUint8List(),
         width: image.width,
@@ -49,14 +62,17 @@ class PosterExporter {
     }
   }
 
-  /// Export and save to [filePath] (must include filename + .png).
+  /// Export and save directly to [filePath] (must include .png extension).
   ///
   /// ```dart
   /// final dir = (await getTemporaryDirectory()).path;
   /// final path = await PosterExporter.exportToFile(
   ///   exportKey,
-  ///   filePath: '$dir/poster.png',
+  ///   filePath: '$dir/poster_${DateTime.now().millisecondsSinceEpoch}.png',
   /// );
+  /// if (path != null) {
+  ///   await Share.shareXFiles([XFile(path)]);
+  /// }
   /// ```
   static Future<String?> exportToFile(
     GlobalKey key, {

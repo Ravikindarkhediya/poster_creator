@@ -4,274 +4,212 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../layouts/layouts.dart';
+import '../controllers/poster_controller.dart';
+import '../layouts/all_layouts.dart';
 import '../layouts/poster_layout_registry.dart';
-import '../models/poster_config.dart';
-import '../models/poster_frame.dart';
+import '../models/poster_frame_model.dart';
 import 'poster_sticker_item.dart';
 
-bool _layoutsSeeded = false;
-
-void _ensureLayouts() {
-  if (!_layoutsSeeded) {
-    seedBuiltInLayouts();
-    _layoutsSeeded = true;
-  }
-}
-
-/// The core rendering widget for [poster_creator].
+/// Core poster rendering widget.
 ///
-/// Stacks layers in order:
+/// Layers (bottom → top):
 ///   0. Canvas background color
-///   1. Template image (background)
-///   2. Frame overlay (layout)
-///   3. Leader photos strip
+///   1. Template image — **BoxFit.cover, fills 100% width × height**
+///   2. Frame overlay
+///   3. Leader photo strip
 ///   4. Party logo badge
-///   5. Stickers (interactive)
+///   5. Interactive stickers
 ///
-/// Wrap in a [RepaintBoundary] with a [GlobalKey] to export as PNG via
-/// [PosterExporter].
-///
-/// ```dart
-/// final exportKey = GlobalKey();
-///
-/// PosterCanvas(
-///   config: PosterConfig(
-///     templateUrl: 'https://example.com/bg.jpg',
-///     userName: 'Ravi Kumar',
-///     designation: 'Ward Member',
-///     frame: PosterFrame.wavyProfile(),
-///   ),
-///   exportKey: exportKey,
-///   onStickerUpdate: (updated) => setState(() => config = config.copyWith(stickers: updated)),
-/// )
-/// ```
-class PosterCanvas extends StatelessWidget {
-  /// Full poster configuration.
-  final PosterConfig config;
-
-  /// Optional override frame — used in preview thumbnail mode so the
-  /// thumbnail can show a different frame than the live canvas.
-  final PosterFrame? frameOverride;
-
-  /// When true, sticker controls (drag handles, delete button) are hidden.
-  /// Use this for export and thumbnail rendering.
+/// Wrap in [RepaintBoundary] with [exportKey] and call
+/// [PosterExporter.export(exportKey)] to get PNG bytes.
+class PosterCanvas extends StatefulWidget {
+  final PosterController controller;
+  final PosterFrameModel? frameOverride;
   final bool isPreview;
-
-  /// Attach a [GlobalKey] to the internal [RepaintBoundary] so that
-  /// [PosterExporter] can capture the canvas as PNG bytes.
   final GlobalKey? exportKey;
-
-  /// Called whenever a sticker is moved, scaled, or rotated.
-  /// Provides the updated sticker list so the parent can rebuild.
-  final void Function(List<dynamic> updatedStickers)? onStickerUpdate;
-
-  /// Called when a sticker is removed.
-  final void Function(String stickerId)? onStickerRemove;
-
-  /// Called when a sticker is tapped (selected).
-  final void Function(String stickerId)? onStickerSelect;
-
-  /// The currently selected sticker id (for highlight rendering).
-  final String? selectedStickerId;
 
   const PosterCanvas({
     super.key,
-    required this.config,
+    required this.controller,
     this.frameOverride,
     this.isPreview = false,
     this.exportKey,
-    this.onStickerUpdate,
-    this.onStickerRemove,
-    this.onStickerSelect,
-    this.selectedStickerId,
   });
 
-  // ── Aspect ratio resolution ────────────────────────────────────────────────
+  @override
+  State<PosterCanvas> createState() => _PosterCanvasState();
+}
 
-  Future<Size> _getImageSize(String url) {
+class _PosterCanvasState extends State<PosterCanvas> {
+  double? _aspectRatio;
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    seedBuiltInLayouts();
+    _resolveAspectRatio();
+  }
+
+  @override
+  void didUpdateWidget(PosterCanvas old) {
+    super.didUpdateWidget(old);
+    if (old.controller.templateUrl != widget.controller.templateUrl) {
+      setState(() { _loaded = false; _aspectRatio = null; });
+      _resolveAspectRatio();
+    }
+  }
+
+  Future<void> _resolveAspectRatio() async {
+    final url = widget.controller.templateUrl;
+    if (url.isEmpty) {
+      setState(() { _aspectRatio = 1.0; _loaded = true; });
+      return;
+    }
+
     final completer = Completer<Size>();
-    final provider = url.startsWith('http')
-        ? NetworkImage(url) as ImageProvider
-        : FileImage(File(url));
+    ImageProvider provider = url.startsWith('http')
+        ? NetworkImage(url)
+        : FileImage(File(url)) as ImageProvider;
 
     provider.resolve(const ImageConfiguration()).addListener(
       ImageStreamListener(
-        (info, _) {
-          if (!completer.isCompleted) {
-            completer.complete(Size(
-              info.image.width.toDouble(),
-              info.image.height.toDouble(),
-            ));
-          }
-        },
-        onError: (_, __) {
-          if (!completer.isCompleted) completer.complete(const Size(1, 1));
-        },
+        (info, _) { if (!completer.isCompleted) completer.complete(Size(info.image.width.toDouble(), info.image.height.toDouble())); },
+        onError: (_, __) { if (!completer.isCompleted) completer.complete(const Size(1, 1)); },
       ),
     );
-    return completer.future;
+
+    final size = await completer.future;
+    if (mounted) {
+      setState(() {
+        _aspectRatio = (size.width / size.height).clamp(0.5, 2.0);
+        _loaded = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    _ensureLayouts();
+    final ctrl = widget.controller;
+    final aspectRatio = _aspectRatio ?? 1.0;
 
-    final effectiveFrame = frameOverride ?? config.frame;
+    return Center(
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: widget.isPreview ? null : [
+              BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 30, offset: const Offset(0, 10)),
+            ],
+          ),
+          child: RepaintBoundary(
+            key: widget.exportKey,
+            child: ListenableBuilder(
+              listenable: ctrl,
+              builder: (_, __) {
+                final c = ctrl.state;
+                final effectiveFrame = widget.frameOverride ?? c.selectedFrame;
 
-    return FutureBuilder<Size>(
-      future: config.aspectRatio != null
-          ? Future.value(Size(config.aspectRatio!, 1))
-          : _getImageSize(config.templateUrl),
-      builder: (context, snapshot) {
-        final double ar = config.aspectRatio ??
-            (snapshot.hasData && snapshot.data != null
-                ? (snapshot.data!.width / snapshot.data!.height)
-                    .clamp(0.5, 2.0)
-                : 1.0);
-
-        return Center(
-          child: AspectRatio(
-            aspectRatio: ar,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: isPreview
-                    ? null
-                    : [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 30,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-              ),
-              child: RepaintBoundary(
-                key: exportKey,
-                child: LayoutBuilder(
-                  builder: (ctx, constraints) {
+                return LayoutBuilder(
+                  builder: (context, constraints) {
                     final double cw = constraints.maxWidth;
-                    final double ch = cw / ar;
-                    return SizedBox(
-                      width: cw,
-                      height: ch,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          // Layer 0: canvas background
-                          Container(color: config.canvasBackgroundColor),
+                    final double ch = constraints.maxHeight;
 
-                          // Layer 1: template image
-                          _buildTemplate(),
+                    // Update canvas size for sticker centering
+                    ctrl.updateCanvasSize(Size(cw, ch));
 
-                          // Layer 2: frame overlay
-                          if (config.showFrame && effectiveFrame != null)
-                            _buildFrame(ctx, effectiveFrame, cw),
+                    return Stack(
+                      children: [
+                        // Layer 0: canvas background
+                        Positioned.fill(child: Container(color: c.canvasBackgroundColor)),
 
-                          // Layer 3: leader photos
-                          if (config.showFrame &&
-                              config.leaderPhotos.isNotEmpty)
-                            _buildLeaderStrip(cw),
+                        // Layer 1: template image — FULL COVER (fills entire canvas)
+                        Positioned.fill(
+                          child: _buildTemplateImage(ctrl.templateUrl),
+                        ),
 
-                          // Layer 4: party logo
-                          if (config.showFrame &&
-                              config.partyLogoUrl != null &&
-                              config.partyLogoUrl!.isNotEmpty)
-                            _buildPartyLogo(cw),
+                        // Layer 2: frame overlay
+                        if (c.showFrame && effectiveFrame != null)
+                          Positioned.fill(child: _buildFrame(context, effectiveFrame, c, cw)),
 
-                          // Layer 5: stickers
-                          if (config.showStickers)
-                            _buildStickerLayer(cw),
-                        ],
-                      ),
+                        // Layer 3: leader photos strip
+                        if (c.showFrame && c.leaderPhotos.isNotEmpty)
+                          Positioned.fill(child: _buildLeaderStrip(c, cw)),
+
+                        // Layer 4: party logo
+                        if (c.showFrame && c.partyLogoUrl != null && c.partyLogoUrl!.isNotEmpty)
+                          _buildPartyLogo(c, cw),
+
+                        // Layer 5: stickers
+                        if (c.showStickers)
+                          Positioned.fill(child: _buildStickerLayer(ctrl)),
+                      ],
                     );
                   },
-                ),
-              ),
+                );
+              },
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  // ── Layer builders ─────────────────────────────────────────────────────────
+  // ── Layer helpers ──────────────────────────────────────────────────────────
 
-  Widget _buildTemplate() {
-    final url = config.templateUrl;
+  Widget _buildTemplateImage(String url) {
+    if (url.isEmpty) return Container(color: Colors.grey.shade200);
+
     if (url.startsWith('http')) {
       return CachedNetworkImage(
         imageUrl: url,
-        fit: BoxFit.cover,
+        fit: BoxFit.cover,     // ← FULL WIDTH & HEIGHT COVER
+        width: double.infinity,
+        height: double.infinity,
         placeholder: (_, __) => Container(color: Colors.grey.shade100),
-        errorWidget: (_, __, ___) => Container(color: Colors.grey.shade200),
+        errorWidget: (_, __, ___) => Container(color: Colors.grey.shade200,
+          child: const Center(child: Icon(Icons.broken_image, color: Colors.grey))),
       );
-    } else {
-      final file = File(url);
-      if (file.existsSync()) {
-        return Image.file(file, fit: BoxFit.cover);
-      }
-      return Container(color: Colors.grey.shade200);
     }
+
+    final file = File(url);
+    if (file.existsSync()) {
+      return Image.file(file, fit: BoxFit.cover, width: double.infinity, height: double.infinity);
+    }
+    return Container(color: Colors.grey.shade200);
   }
 
-  Widget _buildFrame(
-      BuildContext context, PosterFrame frame, double canvasWidth) {
+  Widget _buildFrame(BuildContext ctx, PosterFrameModel frame, dynamic c, double cw) {
     final layout = PosterLayoutRegistry.resolve(frame);
     if (layout == null) return const SizedBox.shrink();
-    return layout.build(
-      context: context,
-      config: config,
-      frame: frame,
-      canvasWidth: canvasWidth,
-    );
+    return layout.build(context: ctx, c: c, canvasWidth: cw);
   }
 
-  Widget _buildLeaderStrip(double cw) {
+  Widget _buildLeaderStrip(dynamic c, double cw) {
     return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      height: cw * 0.2,
+      top: 0, left: 0, right: 0, height: cw * 0.2,
       child: Container(
-        padding:
-            EdgeInsets.symmetric(horizontal: cw * 0.04, vertical: cw * 0.02),
+        padding: EdgeInsets.symmetric(horizontal: cw * 0.04, vertical: cw * 0.02),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white.withOpacity(0.98),
-              Colors.white.withOpacity(0.6),
-            ],
-          ),
+          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
+            colors: [Colors.white.withOpacity(0.98), Colors.white.withOpacity(0.6)]),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: config.leaderPhotos.map((path) {
-            Widget img;
-            if (path.startsWith('http')) {
-              img = CachedNetworkImage(
-                  imageUrl: path, fit: BoxFit.cover);
-            } else {
-              img = Image.file(File(path), fit: BoxFit.cover);
-            }
+          children: c.leaderPhotos.map<Widget>((path) {
+            Widget img = path.startsWith('http')
+                ? CachedNetworkImage(imageUrl: path, fit: BoxFit.cover)
+                : Image.file(File(path), fit: BoxFit.cover);
             return Container(
               margin: EdgeInsets.symmetric(horizontal: cw * 0.012),
-              width: cw * 0.14,
-              height: cw * 0.16,
+              width: cw * 0.14, height: cw * 0.16,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(cw * 0.015),
+                color: Colors.white, borderRadius: BorderRadius.circular(cw * 0.015),
                 border: Border.all(color: Colors.grey.shade300, width: 1.5),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black12, blurRadius: 5)
-                ],
+                boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(cw * 0.0125),
-                child: img,
-              ),
+              child: ClipRRect(borderRadius: BorderRadius.circular(cw * 0.0125), child: img),
             );
           }).toList(),
         ),
@@ -279,57 +217,38 @@ class PosterCanvas extends StatelessWidget {
     );
   }
 
-  Widget _buildPartyLogo(double cw) {
-    final url = config.partyLogoUrl!;
-    Widget img;
-    if (url.startsWith('http')) {
-      img = CachedNetworkImage(imageUrl: url, fit: BoxFit.contain);
-    } else {
-      img = Image.file(File(url), fit: BoxFit.contain);
-    }
-
+  Widget _buildPartyLogo(dynamic c, double cw) {
+    final url = c.partyLogoUrl!;
+    Widget img = url.startsWith('http')
+        ? CachedNetworkImage(imageUrl: url, fit: BoxFit.contain)
+        : Image.file(File(url), fit: BoxFit.contain);
     return Positioned(
-      top: cw * 0.05,
-      right: cw * 0.05,
+      top: cw * 0.05, right: cw * 0.05,
       child: Container(
-        width: cw * 0.175,
-        height: cw * 0.175,
-        padding: EdgeInsets.all(cw * 0.02),
+        width: cw * 0.175, height: cw * 0.175, padding: EdgeInsets.all(cw * 0.02),
         decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          boxShadow: const [
-            BoxShadow(color: Colors.black38, blurRadius: 15, spreadRadius: 1)
-          ],
-          border: Border.all(
-            color: (config.frame?.backgroundColor ?? Colors.orange)
-                .withOpacity(0.8),
-            width: 3,
-          ),
+          color: Colors.white, shape: BoxShape.circle,
+          boxShadow: const [BoxShadow(color: Colors.black38, blurRadius: 15, spreadRadius: 1)],
+          border: Border.all(color: c.frameBackgroundColor.withOpacity(0.8), width: 3),
         ),
         child: ClipOval(child: img),
       ),
     );
   }
 
-  Widget _buildStickerLayer(double canvasWidth) {
+  Widget _buildStickerLayer(PosterController ctrl) {
     return Stack(
-      children: config.stickers.map((sticker) {
+      children: ctrl.state.stickers.map((sticker) {
         return PosterStickerItem(
           key: ValueKey(sticker.id),
           sticker: sticker,
-          canvasWidth: canvasWidth,
-          isPreview: isPreview,
-          isSelected: selectedStickerId == sticker.id,
-          onSelect: () => onStickerSelect?.call(sticker.id),
-          onDeselect: () => onStickerSelect?.call(''),
-          onUpdate: (updated) {
-            final list = config.stickers.map((s) {
-              return s.id == updated.id ? updated : s;
-            }).toList();
-            onStickerUpdate?.call(list);
-          },
-          onRemove: () => onStickerRemove?.call(sticker.id),
+          canvasWidth: ctrl.canvasSize.width,
+          isPreview: widget.isPreview,
+          isSelected: ctrl.selectedStickerId == sticker.id,
+          onSelect: () => ctrl.selectSticker(sticker.id),
+          onDeselect: () => ctrl.deselectStickers(),
+          onUpdate: (updated) => ctrl.updateSticker(updated),
+          onRemove: () => ctrl.removeSticker(sticker.id),
         );
       }).toList(),
     );
