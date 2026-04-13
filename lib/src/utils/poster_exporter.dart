@@ -47,8 +47,9 @@ class PosterExporter {
       }
 
       final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
-      final ByteData? data =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+      final ByteData? data = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
       if (data == null) return null;
 
       return PosterExportResult(

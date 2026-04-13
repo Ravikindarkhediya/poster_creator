@@ -10,5 +10,6 @@ class PosterLayoutRegistry {
 
   static void register(String key, BasePosterLayout layout) => _r[key] = layout;
   static void registerAll(Map<String, BasePosterLayout> m) => _r.addAll(m);
-  static BasePosterLayout? resolve(PosterFrameModel frame) => _r[frame.registryKey];
+  static BasePosterLayout? resolve(PosterFrameModel frame) =>
+      _r[frame.registryKey];
 }

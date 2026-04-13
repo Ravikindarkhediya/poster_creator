@@ -143,14 +143,16 @@ class PosterCustomization {
   }) {
     return PosterCustomization(
       profileImagePath: profileImagePath ?? this.profileImagePath,
-      originalProfileImagePath: originalProfileImagePath ?? this.originalProfileImagePath,
+      originalProfileImagePath:
+          originalProfileImagePath ?? this.originalProfileImagePath,
       isBackgroundRemoved: isBackgroundRemoved ?? this.isBackgroundRemoved,
       showProfileImage: showProfileImage ?? this.showProfileImage,
       userName: userName ?? this.userName,
       designation: designation ?? this.designation,
       partyName: partyName ?? this.partyName,
       nameFontFamily: nameFontFamily ?? this.nameFontFamily,
-      designationFontFamily: designationFontFamily ?? this.designationFontFamily,
+      designationFontFamily:
+          designationFontFamily ?? this.designationFontFamily,
       nameFontSize: nameFontSize ?? this.nameFontSize,
       designationFontSize: designationFontSize ?? this.designationFontSize,
       textColor: textColor ?? this.textColor,
@@ -160,7 +162,8 @@ class PosterCustomization {
       frameColor3: frameColor3 ?? this.frameColor3,
       frameTextColor1: frameTextColor1 ?? this.frameTextColor1,
       frameTextColor2: frameTextColor2 ?? this.frameTextColor2,
-      canvasBackgroundColor: canvasBackgroundColor ?? this.canvasBackgroundColor,
+      canvasBackgroundColor:
+          canvasBackgroundColor ?? this.canvasBackgroundColor,
       themeColor: themeColor ?? this.themeColor,
       facebookHandle: facebookHandle ?? this.facebookHandle,
       instagramHandle: instagramHandle ?? this.instagramHandle,
@@ -219,46 +222,69 @@ class PosterTextStylePreset {
   });
 
   static const plain = PosterTextStylePreset(
-    frameId: 'plain', fontKey: 'Poppins', fontWeight: 400,
-    textColor: Colors.white, paddingFactor: 0.035,
+    frameId: 'plain',
+    fontKey: 'Poppins',
+    fontWeight: 400,
+    textColor: Colors.white,
+    paddingFactor: 0.035,
   );
 
   static const capsule = PosterTextStylePreset(
-    frameId: 'capsule', fontKey: 'Poppins', fontWeight: 900,
+    frameId: 'capsule',
+    fontKey: 'Poppins',
+    fontWeight: 900,
     textColor: Colors.white,
     backgroundColor: Color(0xFF2F6BFF),
-    borderColor: Color(0x99FFFFFF), borderWidth: 1.5,
-    shadowEnabled: true, shadowColor: Color(0xAA2F6BFF), shadowBlur: 18,
+    borderColor: Color(0x99FFFFFF),
+    borderWidth: 1.5,
+    shadowEnabled: true,
+    shadowColor: Color(0xAA2F6BFF),
+    shadowBlur: 18,
     paddingFactor: 0.085,
   );
 
   static const outline = PosterTextStylePreset(
-    frameId: 'outline', fontKey: 'Montserrat', fontWeight: 800,
+    frameId: 'outline',
+    fontKey: 'Montserrat',
+    fontWeight: 800,
     textColor: Colors.white,
     backgroundColor: Color(0x33000000),
-    borderColor: Colors.white, borderWidth: 2,
+    borderColor: Colors.white,
+    borderWidth: 2,
     paddingFactor: 0.07,
   );
 
   static const neon = PosterTextStylePreset(
-    frameId: 'neon', fontKey: 'Nunito', fontWeight: 900,
+    frameId: 'neon',
+    fontKey: 'Nunito',
+    fontWeight: 900,
     textColor: Color(0xFFFFF2A1),
     backgroundColor: Color(0x22000000),
-    borderColor: Color(0xFFFFF2A1), borderWidth: 1.5,
-    shadowEnabled: true, shadowColor: Color(0xFFFFF2A1), shadowBlur: 22,
-    paddingFactor: 0.07, letterSpacing: 0.2,
+    borderColor: Color(0xFFFFF2A1),
+    borderWidth: 1.5,
+    shadowEnabled: true,
+    shadowColor: Color(0xFFFFF2A1),
+    shadowBlur: 22,
+    paddingFactor: 0.07,
+    letterSpacing: 0.2,
   );
 
   static const emoji = PosterTextStylePreset(
-    frameId: 'emoji', fontKey: 'emoji', fontWeight: 700,
-    textColor: Colors.white, paddingFactor: 0.02,
+    frameId: 'emoji',
+    fontKey: 'emoji',
+    fontWeight: 700,
+    textColor: Colors.white,
+    paddingFactor: 0.02,
   );
 
-  static const List<PosterTextStylePreset> all = [plain, capsule, outline, neon];
+  static const List<PosterTextStylePreset> all = [
+    plain,
+    capsule,
+    outline,
+    neon,
+  ];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Export result
 // ─────────────────────────────────────────────────────────────────────────────
-
-

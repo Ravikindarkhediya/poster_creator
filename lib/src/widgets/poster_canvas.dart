@@ -55,7 +55,10 @@ class _PosterCanvasState extends State<PosterCanvas> {
   void didUpdateWidget(PosterCanvas old) {
     super.didUpdateWidget(old);
     if (old.controller.templateUrl != widget.controller.templateUrl) {
-      setState(() { _loaded = false; _aspectRatio = null; });
+      setState(() {
+        _loaded = false;
+        _aspectRatio = null;
+      });
       _resolveAspectRatio();
     }
   }
@@ -63,7 +66,10 @@ class _PosterCanvasState extends State<PosterCanvas> {
   Future<void> _resolveAspectRatio() async {
     final url = widget.controller.templateUrl;
     if (url.isEmpty) {
-      setState(() { _aspectRatio = 1.0; _loaded = true; });
+      setState(() {
+        _aspectRatio = 1.0;
+        _loaded = true;
+      });
       return;
     }
 
@@ -72,12 +78,24 @@ class _PosterCanvasState extends State<PosterCanvas> {
         ? NetworkImage(url)
         : FileImage(File(url)) as ImageProvider;
 
-    provider.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener(
-        (info, _) { if (!completer.isCompleted) completer.complete(Size(info.image.width.toDouble(), info.image.height.toDouble())); },
-        onError: (_, __) { if (!completer.isCompleted) completer.complete(const Size(1, 1)); },
-      ),
-    );
+    provider
+        .resolve(const ImageConfiguration())
+        .addListener(
+          ImageStreamListener(
+            (info, _) {
+              if (!completer.isCompleted)
+                completer.complete(
+                  Size(
+                    info.image.width.toDouble(),
+                    info.image.height.toDouble(),
+                  ),
+                );
+            },
+            onError: (_, __) {
+              if (!completer.isCompleted) completer.complete(const Size(1, 1));
+            },
+          ),
+        );
 
     final size = await completer.future;
     if (mounted) {
@@ -99,9 +117,15 @@ class _PosterCanvasState extends State<PosterCanvas> {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: widget.isPreview ? null : [
-              BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 30, offset: const Offset(0, 10)),
-            ],
+            boxShadow: widget.isPreview
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 30,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
           ),
           child: RepaintBoundary(
             key: widget.exportKey,
@@ -122,7 +146,9 @@ class _PosterCanvasState extends State<PosterCanvas> {
                     return Stack(
                       children: [
                         // Layer 0: canvas background
-                        Positioned.fill(child: Container(color: c.canvasBackgroundColor)),
+                        Positioned.fill(
+                          child: Container(color: c.canvasBackgroundColor),
+                        ),
 
                         // Layer 1: template image — FULL COVER (fills entire canvas)
                         Positioned.fill(
@@ -131,14 +157,18 @@ class _PosterCanvasState extends State<PosterCanvas> {
 
                         // Layer 2: frame overlay
                         if (c.showFrame && effectiveFrame != null)
-                          Positioned.fill(child: _buildFrame(context, effectiveFrame, c, cw)),
+                          Positioned.fill(
+                            child: _buildFrame(context, effectiveFrame, c, cw),
+                          ),
 
                         // Layer 3: leader photos strip
                         if (c.showFrame && c.leaderPhotos.isNotEmpty)
                           Positioned.fill(child: _buildLeaderStrip(c, cw)),
 
                         // Layer 4: party logo
-                        if (c.showFrame && c.partyLogoUrl != null && c.partyLogoUrl!.isNotEmpty)
+                        if (c.showFrame &&
+                            c.partyLogoUrl != null &&
+                            c.partyLogoUrl!.isNotEmpty)
                           _buildPartyLogo(c, cw),
 
                         // Layer 5: stickers
@@ -164,23 +194,37 @@ class _PosterCanvasState extends State<PosterCanvas> {
     if (url.startsWith('http')) {
       return CachedNetworkImage(
         imageUrl: url,
-        fit: BoxFit.cover,     // ← FULL WIDTH & HEIGHT COVER
+        fit: BoxFit.cover, // ← FULL WIDTH & HEIGHT COVER
         width: double.infinity,
         height: double.infinity,
         placeholder: (_, __) => Container(color: Colors.grey.shade100),
-        errorWidget: (_, __, ___) => Container(color: Colors.grey.shade200,
-          child: const Center(child: Icon(Icons.broken_image, color: Colors.grey))),
+        errorWidget: (_, __, ___) => Container(
+          color: Colors.grey.shade200,
+          child: const Center(
+            child: Icon(Icons.broken_image, color: Colors.grey),
+          ),
+        ),
       );
     }
 
     final file = File(url);
     if (file.existsSync()) {
-      return Image.file(file, fit: BoxFit.cover, width: double.infinity, height: double.infinity);
+      return Image.file(
+        file,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
     }
     return Container(color: Colors.grey.shade200);
   }
 
-  Widget _buildFrame(BuildContext ctx, PosterFrameModel frame, dynamic c, double cw) {
+  Widget _buildFrame(
+    BuildContext ctx,
+    PosterFrameModel frame,
+    dynamic c,
+    double cw,
+  ) {
     final layout = PosterLayoutRegistry.resolve(frame);
     if (layout == null) return const SizedBox.shrink();
     return layout.build(context: ctx, c: c, canvasWidth: cw);
@@ -188,12 +232,24 @@ class _PosterCanvasState extends State<PosterCanvas> {
 
   Widget _buildLeaderStrip(dynamic c, double cw) {
     return Positioned(
-      top: 0, left: 0, right: 0, height: cw * 0.2,
+      top: 0,
+      left: 0,
+      right: 0,
+      height: cw * 0.2,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: cw * 0.04, vertical: cw * 0.02),
+        padding: EdgeInsets.symmetric(
+          horizontal: cw * 0.04,
+          vertical: cw * 0.02,
+        ),
         decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            colors: [Colors.white.withOpacity(0.98), Colors.white.withOpacity(0.6)]),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white.withOpacity(0.98),
+              Colors.white.withOpacity(0.6),
+            ],
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -203,13 +259,20 @@ class _PosterCanvasState extends State<PosterCanvas> {
                 : Image.file(File(path), fit: BoxFit.cover);
             return Container(
               margin: EdgeInsets.symmetric(horizontal: cw * 0.012),
-              width: cw * 0.14, height: cw * 0.16,
+              width: cw * 0.14,
+              height: cw * 0.16,
               decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(cw * 0.015),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(cw * 0.015),
                 border: Border.all(color: Colors.grey.shade300, width: 1.5),
-                boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
+                boxShadow: const [
+                  BoxShadow(color: Colors.black12, blurRadius: 5),
+                ],
               ),
-              child: ClipRRect(borderRadius: BorderRadius.circular(cw * 0.0125), child: img),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(cw * 0.0125),
+                child: img,
+              ),
             );
           }).toList(),
         ),
@@ -223,13 +286,22 @@ class _PosterCanvasState extends State<PosterCanvas> {
         ? CachedNetworkImage(imageUrl: url, fit: BoxFit.contain)
         : Image.file(File(url), fit: BoxFit.contain);
     return Positioned(
-      top: cw * 0.05, right: cw * 0.05,
+      top: cw * 0.05,
+      right: cw * 0.05,
       child: Container(
-        width: cw * 0.175, height: cw * 0.175, padding: EdgeInsets.all(cw * 0.02),
+        width: cw * 0.175,
+        height: cw * 0.175,
+        padding: EdgeInsets.all(cw * 0.02),
         decoration: BoxDecoration(
-          color: Colors.white, shape: BoxShape.circle,
-          boxShadow: const [BoxShadow(color: Colors.black38, blurRadius: 15, spreadRadius: 1)],
-          border: Border.all(color: c.frameBackgroundColor.withOpacity(0.8), width: 3),
+          color: Colors.white,
+          shape: BoxShape.circle,
+          boxShadow: const [
+            BoxShadow(color: Colors.black38, blurRadius: 15, spreadRadius: 1),
+          ],
+          border: Border.all(
+            color: c.frameBackgroundColor.withOpacity(0.8),
+            width: 3,
+          ),
         ),
         child: ClipOval(child: img),
       ),

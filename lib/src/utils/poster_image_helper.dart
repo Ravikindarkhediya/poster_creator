@@ -28,21 +28,25 @@ class PosterImageHelper {
       provider = FileImage(file);
     }
 
-    provider.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener(
-        (info, _) {
-          if (!completer.isCompleted) {
-            completer.complete(Size(
-              info.image.width.toDouble(),
-              info.image.height.toDouble(),
-            ));
-          }
-        },
-        onError: (_, __) {
-          if (!completer.isCompleted) completer.complete(Size.zero);
-        },
-      ),
-    );
+    provider
+        .resolve(const ImageConfiguration())
+        .addListener(
+          ImageStreamListener(
+            (info, _) {
+              if (!completer.isCompleted) {
+                completer.complete(
+                  Size(
+                    info.image.width.toDouble(),
+                    info.image.height.toDouble(),
+                  ),
+                );
+              }
+            },
+            onError: (_, __) {
+              if (!completer.isCompleted) completer.complete(Size.zero);
+            },
+          ),
+        );
 
     return completer.future;
   }
@@ -70,7 +74,9 @@ class PosterImageHelper {
     if (rawPath.startsWith('http')) return rawPath;
     if (File(rawPath).existsSync()) return rawPath;
     if (baseUrl.isNotEmpty) {
-      final base = baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
+      final base = baseUrl.endsWith('/')
+          ? baseUrl.substring(0, baseUrl.length - 1)
+          : baseUrl;
       final path = rawPath.startsWith('/') ? rawPath : '/$rawPath';
       return '$base$path';
     }

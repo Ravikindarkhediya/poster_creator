@@ -8,14 +8,26 @@ class WavyProfileClipper extends CustomClipper<Path> {
     const wW = 1.0;
     path.moveTo(0, size.height * wH);
     for (var i = 0; i < 20; i++) {
-      path.relativeQuadraticBezierTo(size.width * wW / 4, -size.height * wH, size.width * wW / 2, 0);
-      path.relativeQuadraticBezierTo(size.width * wW / 4, size.height * wH, size.width * wW / 2, 0);
+      path.relativeQuadraticBezierTo(
+        size.width * wW / 4,
+        -size.height * wH,
+        size.width * wW / 2,
+        0,
+      );
+      path.relativeQuadraticBezierTo(
+        size.width * wW / 4,
+        size.height * wH,
+        size.width * wW / 2,
+        0,
+      );
     }
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
     return path..close();
   }
-  @override bool shouldReclip(_) => false;
+
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class WavyTopClipper extends CustomClipper<Path> {
@@ -34,7 +46,9 @@ class WavyTopClipper extends CustomClipper<Path> {
     path.lineTo(0, size.height - wH);
     return path..close();
   }
-  @override bool shouldReclip(_) => false;
+
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class WavyEdgeClipper extends CustomClipper<Path> {
@@ -53,7 +67,9 @@ class WavyEdgeClipper extends CustomClipper<Path> {
     path.lineTo(0, size.height);
     return path..close();
   }
-  @override bool shouldReclip(_) => false;
+
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class SleekRibbonClipper extends CustomClipper<Path> {
@@ -65,7 +81,8 @@ class SleekRibbonClipper extends CustomClipper<Path> {
     ..lineTo(size.width, size.height)
     ..lineTo(0, size.height)
     ..close();
-  @override bool shouldReclip(_) => false;
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class ModernAngledBannerClipper extends CustomClipper<Path> {
@@ -76,7 +93,8 @@ class ModernAngledBannerClipper extends CustomClipper<Path> {
     ..lineTo(size.width - size.height * 0.5, size.height)
     ..lineTo(0, size.height)
     ..close();
-  @override bool shouldReclip(_) => false;
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class ModernAngledTagClipper extends CustomClipper<Path> {
@@ -87,7 +105,8 @@ class ModernAngledTagClipper extends CustomClipper<Path> {
     ..lineTo(size.width - size.height * 0.3, size.height)
     ..lineTo(0, size.height)
     ..close();
-  @override bool shouldReclip(_) => false;
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class SharpAngleClipper extends CustomClipper<Path> {
@@ -101,7 +120,9 @@ class SharpAngleClipper extends CustomClipper<Path> {
       ..lineTo(0, size.height)
       ..close();
   }
-  @override bool shouldReclip(_) => false;
+
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class SharpAngleClipperBottom extends CustomClipper<Path> {
@@ -115,7 +136,9 @@ class SharpAngleClipperBottom extends CustomClipper<Path> {
       ..lineTo(0, size.height)
       ..close();
   }
-  @override bool shouldReclip(_) => false;
+
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class NotchClipper extends CustomClipper<Path> {
@@ -128,13 +151,19 @@ class NotchClipper extends CustomClipper<Path> {
     return Path()
       ..lineTo(0, 0)
       ..lineTo(centerX - nr, 0)
-      ..arcToPoint(Offset(centerX + nr, 0), radius: Radius.circular(nr), clockwise: false)
+      ..arcToPoint(
+        Offset(centerX + nr, 0),
+        radius: Radius.circular(nr),
+        clockwise: false,
+      )
       ..lineTo(size.width, 0)
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)
       ..close();
   }
-  @override bool shouldReclip(_) => false;
+
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class NotchClipperBottom extends CustomClipper<Path> {
@@ -149,11 +178,17 @@ class NotchClipperBottom extends CustomClipper<Path> {
       ..lineTo(size.width, 0)
       ..lineTo(size.width, size.height)
       ..lineTo(centerX + nr, size.height)
-      ..arcToPoint(Offset(centerX - nr, size.height), radius: Radius.circular(nr), clockwise: true)
+      ..arcToPoint(
+        Offset(centerX - nr, size.height),
+        radius: Radius.circular(nr),
+        clockwise: true,
+      )
       ..lineTo(0, size.height)
       ..close();
   }
-  @override bool shouldReclip(_) => false;
+
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class DiagonalSlashClipper extends CustomClipper<Path> {
@@ -167,7 +202,9 @@ class DiagonalSlashClipper extends CustomClipper<Path> {
       ..lineTo(0, size.height)
       ..close();
   }
-  @override bool shouldReclip(_) => false;
+
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class DiagonalSlashAccentClipper extends CustomClipper<Path> {
@@ -182,7 +219,9 @@ class DiagonalSlashAccentClipper extends CustomClipper<Path> {
       ..lineTo(0, bot)
       ..close();
   }
-  @override bool shouldReclip(_) => false;
+
+  @override
+  bool shouldReclip(_) => false;
 }
 
 class ArcRevealClipper extends CustomClipper<Path> {
@@ -197,10 +236,17 @@ class ArcRevealClipper extends CustomClipper<Path> {
       ..moveTo(0, size.height)
       ..lineTo(size.width, size.height)
       ..lineTo(size.width, cy)
-      ..arcToPoint(Offset(0, cy), radius: Radius.elliptical(rx, ry), clockwise: false)
+      ..arcToPoint(
+        Offset(0, cy),
+        radius: Radius.elliptical(rx, ry),
+        clockwise: false,
+      )
       ..close();
   }
-  @override bool shouldReclip(ArcRevealClipper old) => old.arcHeightFraction != arcHeightFraction;
+
+  @override
+  bool shouldReclip(ArcRevealClipper old) =>
+      old.arcHeightFraction != arcHeightFraction;
 }
 
 class CornerBadgeClipper extends CustomClipper<Path> {
@@ -212,5 +258,6 @@ class CornerBadgeClipper extends CustomClipper<Path> {
     ..lineTo(size.width - size.height * 0.5, size.height)
     ..lineTo(0, size.height)
     ..close();
-  @override bool shouldReclip(_) => false;
+  @override
+  bool shouldReclip(_) => false;
 }

@@ -31,11 +31,17 @@ abstract class BasePosterLayout {
     final path = c.profileImagePath;
     if (path.isEmpty) {
       return Container(
-        width: radius * 2, height: radius * 2,
+        width: radius * 2,
+        height: radius * 2,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.grey.shade200,
-          border: border ? Border.all(color: borderColor ?? Colors.white, width: radius * 0.07) : null,
+          border: border
+              ? Border.all(
+                  color: borderColor ?? Colors.white,
+                  width: radius * 0.07,
+                )
+              : null,
         ),
         child: Icon(Icons.person, size: radius, color: Colors.grey.shade400),
       );
@@ -47,7 +53,8 @@ abstract class BasePosterLayout {
         imageUrl: path,
         fit: BoxFit.cover,
         placeholder: (_, __) => Container(color: Colors.grey.shade200),
-        errorWidget: (_, __, ___) => Icon(Icons.person, size: radius, color: Colors.grey.shade400),
+        errorWidget: (_, __, ___) =>
+            Icon(Icons.person, size: radius, color: Colors.grey.shade400),
       );
     } else {
       final file = File(path);
@@ -57,12 +64,24 @@ abstract class BasePosterLayout {
     }
 
     return Container(
-      width: radius * 2, height: radius * 2,
+      width: radius * 2,
+      height: radius * 2,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: border ? Border.all(color: borderColor ?? Colors.white, width: radius * 0.07) : null,
+        border: border
+            ? Border.all(
+                color: borderColor ?? Colors.white,
+                width: radius * 0.07,
+              )
+            : null,
         boxShadow: shadow
-            ? [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: radius * 0.4, spreadRadius: 1)]
+            ? [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: radius * 0.4,
+                  spreadRadius: 1,
+                ),
+              ]
             : null,
       ),
       child: ClipOval(
@@ -86,8 +105,8 @@ abstract class BasePosterLayout {
     double? letterSpacing,
     double shadowBlur = 8,
   }) {
-    final baseSize = sizePx ??
-        (isDesignation ? c.designationFontSize : c.nameFontSize);
+    final baseSize =
+        sizePx ?? (isDesignation ? c.designationFontSize : c.nameFontSize);
     final rs = baseSize * (canvasWidth / 400.0);
     final family = isDesignation ? c.designationFontFamily : c.nameFontFamily;
 
@@ -98,11 +117,18 @@ abstract class BasePosterLayout {
         textStyle: TextStyle(
           fontSize: rs,
           fontWeight: bold ? FontWeight.w900 : FontWeight.w500,
-          color: color ?? (isDesignation ? c.frameTextColor2 : c.frameTextColor1),
+          color:
+              color ?? (isDesignation ? c.frameTextColor2 : c.frameTextColor1),
           letterSpacing: letterSpacing,
           height: 1.1,
           shadows: shadow
-              ? [Shadow(color: Colors.black.withOpacity(0.5), blurRadius: shadowBlur, offset: const Offset(0, 2))]
+              ? [
+                  Shadow(
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: shadowBlur,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
               : null,
         ),
       );
@@ -113,6 +139,11 @@ abstract class BasePosterLayout {
         color: color ?? Colors.white,
       );
     }
-    return Text(text, style: style, maxLines: 1, overflow: TextOverflow.ellipsis);
+    return Text(
+      text,
+      style: style,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
   }
 }
