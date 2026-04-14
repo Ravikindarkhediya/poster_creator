@@ -1,7 +1,8 @@
 name: poster_creator
-description: "A new Flutter package project."
+description: "A Flutter package to create customizable posters with frames, stickers, text, and export functionality."
 version: 0.0.1
-homepage:
+homepage: https://github.com/Ravikindarkhediya/poster_creator
+repository: https://github.com/Ravikindarkhediya/poster_creator
 
 environment:
   sdk: ^3.10.4
