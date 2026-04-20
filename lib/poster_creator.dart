@@ -20,7 +20,7 @@
 /// PosterCanvas(controller: ctrl, exportKey: myKey)
 /// final result = await PosterExporter.export(myKey);
 /// ```
-library poster_creator;
+library;
 
 // ── Models ──────────────────────────────────────────────────────────────────
 export 'src/models/poster_frame_model.dart';

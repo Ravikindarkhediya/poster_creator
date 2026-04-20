@@ -41,7 +41,7 @@ class PosterFontTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: controller,
-      builder: (_, __) {
+      builder: (_, _) {
         final c = controller.state;
         final isName = controller.activeFontField == 'name';
         final selFont = isName ? c.nameFontFamily : c.designationFontFamily;
@@ -158,8 +158,8 @@ class PosterFontTab extends StatelessWidget {
                             boxShadow: [
                               BoxShadow(
                                 color: isSel
-                                    ? Colors.blueAccent.withOpacity(0.3)
-                                    : Colors.black.withOpacity(0.05),
+                                    ? Colors.blueAccent.withValues(alpha: 0.3)
+                                    : Colors.black.withValues(alpha: 0.05),
                                 blurRadius: isSel ? 8 : 4,
                                 offset: Offset(0, isSel ? 4 : 2),
                               ),
@@ -191,7 +191,7 @@ class PosterFontTab extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 9,
                                     color: isSel
-                                        ? Colors.white.withOpacity(0.9)
+                                        ? Colors.white.withValues(alpha: 0.9)
                                         : Colors.grey.shade600,
                                     fontWeight: isSel
                                         ? FontWeight.bold
@@ -271,26 +271,6 @@ class PosterPhotoTab extends StatelessWidget {
     if (f != null) controller.updatePhoto(f.path);
   }
 
-  Future<void> _toggleBgRemoval(bool v) async {
-    if (!v) {
-      controller.setBackgroundRemoved(false);
-      return;
-    }
-    if (controller.state.profileImagePath.isEmpty) return;
-    if (onRemoveBackground != null) {
-      final processed = await onRemoveBackground!(
-        controller.state.originalProfileImagePath.isNotEmpty
-            ? controller.state.originalProfileImagePath
-            : controller.state.profileImagePath,
-      );
-      controller.setBackgroundRemoved(
-        processed != null,
-        processedPath: processed,
-      );
-    } else {
-      controller.setBackgroundRemoved(true);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -318,7 +298,7 @@ class PosterPhotoTab extends StatelessWidget {
                         border: Border.all(color: Colors.blue.shade100),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 8,
                           ),
                         ],
@@ -373,16 +353,16 @@ class PosterPhotoTab extends StatelessWidget {
                   controller.toggleProfileImage,
                   Colors.green,
                 ),
-                if (c.profileImagePath.isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  _toggleRow(
-                    Icons.auto_fix_high_rounded,
-                    'Remove Background',
-                    c.isBackgroundRemoved,
-                    _toggleBgRemoval,
-                    Colors.blue,
-                  ),
-                ],
+                // if (c.profileImagePath.isNotEmpty) ...[
+                //   const SizedBox(height: 12),
+                //   _toggleRow(
+                //     Icons.auto_fix_high_rounded,
+                //     'Remove Background',
+                //     c.isBackgroundRemoved,
+                //     _toggleBgRemoval,
+                //     Colors.blue,
+                //   ),
+                // ],
               ],
             ),
           ),
@@ -398,9 +378,9 @@ class PosterPhotoTab extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.05),
+          color: color.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.15)),
+          border: Border.all(color: color.withValues(alpha: 0.15)),
         ),
         child: Row(
           children: [
@@ -430,9 +410,9 @@ class PosterPhotoTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.1)),
+        border: Border.all(color: color.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
@@ -516,7 +496,7 @@ class PosterFrameTab extends StatelessWidget {
                           child: Switch(
                             value: show,
                             onChanged: controller.toggleProfileImage,
-                            activeColor: Colors.blueAccent,
+                            activeThumbColor: Colors.blueAccent,
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
                           ),
@@ -561,12 +541,12 @@ class PosterFrameTab extends StatelessWidget {
                         boxShadow: [
                           isSel
                               ? BoxShadow(
-                                  color: Colors.blue.withOpacity(0.15),
+                                  color: Colors.blue.withValues(alpha: 0.15),
                                   blurRadius: 8,
                                   offset: const Offset(0, 3),
                                 )
                               : BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
+                                  color: Colors.black.withValues(alpha: 0.03),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -585,7 +565,7 @@ class PosterFrameTab extends StatelessWidget {
                             ),
                             if (isSel) ...[
                               Container(
-                                color: Colors.blueAccent.withOpacity(0.05),
+                                color: Colors.blueAccent.withValues(alpha: 0.05),
                               ),
                               Positioned(
                                 top: 4,
@@ -851,7 +831,7 @@ class PosterFramePicker extends StatelessWidget {
                     boxShadow: isSel
                         ? [
                             BoxShadow(
-                              color: Colors.blueAccent.withOpacity(0.2),
+                              color: Colors.blueAccent.withValues(alpha: 0.2),
                               blurRadius: 10,
                             ),
                           ]

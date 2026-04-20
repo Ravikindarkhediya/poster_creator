@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -52,8 +53,8 @@ abstract class BasePosterLayout {
       img = CachedNetworkImage(
         imageUrl: path,
         fit: BoxFit.cover,
-        placeholder: (_, __) => Container(color: Colors.grey.shade200),
-        errorWidget: (_, __, ___) =>
+        placeholder: (_, _) => Container(color: Colors.grey.shade200),
+        errorWidget: (_, _, _) =>
             Icon(Icons.person, size: radius, color: Colors.grey.shade400),
       );
     } else {
@@ -77,7 +78,7 @@ abstract class BasePosterLayout {
         boxShadow: shadow
             ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: radius * 0.4,
                   spreadRadius: 1,
                 ),
@@ -124,7 +125,7 @@ abstract class BasePosterLayout {
           shadows: shadow
               ? [
                   Shadow(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     blurRadius: shadowBlur,
                     offset: const Offset(0, 2),
                   ),

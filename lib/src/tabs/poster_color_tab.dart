@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import '../controllers/poster_controller.dart';
-import '../models/poster_frame_model.dart';
 
 class PosterColorTab extends StatelessWidget {
   final PosterController controller;

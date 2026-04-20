@@ -92,11 +92,13 @@ class _PosterEditorScreenState extends State<PosterEditorScreen> {
       _ctrl = PosterController(templateUrl: widget.templateUrl);
       // Pre-fill data
       if (widget.userName != null) _ctrl.updateUserName(widget.userName!);
-      if (widget.designation != null)
+      if (widget.designation != null) {
         _ctrl.updateDesignation(widget.designation!);
+      }
       if (widget.partyName != null) _ctrl.updatePartyName(widget.partyName!);
-      if (widget.profileImagePath != null)
+      if (widget.profileImagePath != null) {
         _ctrl.updatePhoto(widget.profileImagePath!);
+      }
       if (widget.frame != null) _ctrl.updateFrame(widget.frame!);
     }
 
@@ -150,16 +152,6 @@ class _PosterEditorScreenState extends State<PosterEditorScreen> {
     }
   }
 
-  Future<void> _share() async {
-    setState(() => _exporting = true);
-    _ctrl.deselectStickers();
-    await Future.delayed(const Duration(milliseconds: 80));
-
-    final result = await PosterExporter.export(_exportKey, pixelRatio: 3.0);
-    setState(() => _exporting = false);
-    if (result == null || !mounted) return;
-    widget.onShare?.call(result);
-  }
 
   void _openTab(int index) {
     setState(() => _activeTab = index);
@@ -238,7 +230,7 @@ class _PosterEditorScreenState extends State<PosterEditorScreen> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 15,
                               offset: const Offset(0, -5),
                             ),
@@ -440,7 +432,7 @@ class _PosterEditorScreenState extends State<PosterEditorScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, -4),
           ),

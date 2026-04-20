@@ -380,7 +380,7 @@ class _FooterStripLayout extends BasePosterLayout {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: Colors.black.withValues(alpha: 0.15),
                     blurRadius: 12,
                     offset: Offset(0, -3),
                   ),
@@ -446,10 +446,10 @@ class _FloatingCardLayout extends BasePosterLayout {
       child: Container(
         padding: EdgeInsets.all(canvasWidth * 0.03),
         decoration: BoxDecoration(
-          color: c.frameColor1.withOpacity(0.8),
+          color: c.frameColor1.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(canvasWidth * 0.05),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 15),
           ],
         ),
         child: Row(
@@ -638,7 +638,7 @@ class _RajnetaPremiumLayout extends BasePosterLayout {
               color: c.frameColor1,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   blurRadius: 25,
                   offset: Offset(0, -5),
                 ),
@@ -726,8 +726,8 @@ class _RajnetaModernLayout extends BasePosterLayout {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  c.frameColor1.withOpacity(0.4),
-                  c.frameColor1.withOpacity(0.95),
+                  c.frameColor1.withValues(alpha: 0.4),
+                  c.frameColor1.withValues(alpha: 0.95),
                   c.frameColor1,
                 ],
                 stops: [0, 0.3, 0.7, 1],
@@ -983,7 +983,7 @@ class _DiagonalSlashLayout extends BasePosterLayout {
           height: canvasWidth * 0.6,
           child: ClipPath(
             clipper: DiagonalSlashAccentClipper(),
-            child: Container(color: c.frameColor2.withOpacity(0.7)),
+            child: Container(color: c.frameColor2.withValues(alpha: 0.7)),
           ),
         ),
         Positioned(
@@ -1057,9 +1057,9 @@ class _PremiumGlassCardLayout extends BasePosterLayout {
         child: Container(
           padding: EdgeInsets.all(canvasWidth * 0.03),
           decoration: BoxDecoration(
-            color: c.frameColor1.withOpacity(0.85),
+            color: c.frameColor1.withValues(alpha: 0.85),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               width: 1.5,
             ),
           ),
@@ -1180,7 +1180,7 @@ class _CenterStageLayout extends BasePosterLayout {
         width: canvasWidth * 0.8,
         padding: EdgeInsets.all(canvasWidth * 0.05),
         decoration: BoxDecoration(
-          color: c.frameColor1.withOpacity(0.9),
+          color: c.frameColor1.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(canvasWidth * 0.05),
           border: Border.all(color: c.frameColor2, width: 2),
         ),
@@ -1551,10 +1551,10 @@ class _FloatingCardTopLayout extends BasePosterLayout {
       child: Container(
         padding: EdgeInsets.all(canvasWidth * 0.03),
         decoration: BoxDecoration(
-          color: c.frameColor1.withOpacity(0.8),
+          color: c.frameColor1.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(canvasWidth * 0.05),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 15),
           ],
         ),
         child: Row(
@@ -1956,7 +1956,7 @@ class _RajnetaPremiumTopLayout extends BasePosterLayout {
               color: c.frameColor1,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 15,
                   offset: Offset(0, 5),
                 ),

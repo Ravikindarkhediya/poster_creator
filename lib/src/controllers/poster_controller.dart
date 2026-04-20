@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/poster_customization.dart' hide PosterTextStylePreset;
 import '../models/poster_frame_model.dart';
@@ -173,12 +172,12 @@ class PosterController extends ChangeNotifier {
       (s) => s.copyWith(
         themeColor: color,
         frameBackgroundColor: color,
-        canvasBackgroundColor: color.withOpacity(0.05),
+        canvasBackgroundColor: color.withValues(alpha: 0.05),
         frameColor1: color,
         frameColor2: color,
         frameTextColor1: isDark ? Colors.white : Colors.black87,
         frameTextColor2: isDark
-            ? Colors.white.withOpacity(0.9)
+            ? Colors.white.withValues(alpha: 0.9)
             : Colors.black54,
         textColor: isDark ? Colors.white : Colors.black,
       ),

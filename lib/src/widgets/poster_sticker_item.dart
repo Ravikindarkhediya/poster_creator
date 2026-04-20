@@ -58,12 +58,15 @@ class _PosterStickerItemState extends State<PosterStickerItem> {
   @override
   void didUpdateWidget(PosterStickerItem old) {
     super.didUpdateWidget(old);
-    if (old.sticker.position != widget.sticker.position)
+    if (old.sticker.position != widget.sticker.position) {
       _pos = widget.sticker.position;
-    if (old.sticker.scale != widget.sticker.scale)
+    }
+    if (old.sticker.scale != widget.sticker.scale) {
       _scale = widget.sticker.scale;
-    if (old.sticker.rotation != widget.sticker.rotation)
+    }
+    if (old.sticker.rotation != widget.sticker.rotation) {
       _rot = widget.sticker.rotation;
+    }
     if (widget.sticker.isText &&
         !_editing &&
         widget.sticker.text != _textCtrl.text) {
@@ -127,8 +130,9 @@ class _PosterStickerItemState extends State<PosterStickerItem> {
                       if (_editing) return;
                       setState(() {
                         _pos += d.focalPointDelta;
-                        if (d.scale != 1.0)
+                        if (d.scale != 1.0) {
                           _scale = (_baseScale * d.scale).clamp(0.2, 5.0);
+                        }
                         if (d.rotation != 0.0) _rot = _baseRot + d.rotation;
                       });
                       _commit();
@@ -144,7 +148,7 @@ class _PosterStickerItemState extends State<PosterStickerItem> {
                       decoration: BoxDecoration(
                         border: (widget.isSelected && !widget.isPreview)
                             ? Border.all(
-                                color: Colors.blueAccent.withOpacity(0.5),
+                                color: Colors.blueAccent.withValues(alpha: 0.5),
                                 width: 1.5,
                               )
                             : null,
@@ -240,16 +244,16 @@ class _PosterStickerItemState extends State<PosterStickerItem> {
       return Image.file(
         File(s.assetUrl),
         fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) =>
+        errorBuilder: (_, _, _) =>
             const Icon(Icons.broken_image, color: Colors.grey),
       );
     }
     return CachedNetworkImage(
       imageUrl: s.assetUrl,
       fit: BoxFit.contain,
-      placeholder: (_, __) =>
+      placeholder: (_, _) =>
           const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      errorWidget: (_, __, ___) =>
+      errorWidget: (_, _, _) =>
           const Icon(Icons.broken_image, color: Colors.grey),
     );
   }
@@ -307,7 +311,7 @@ class _StickerText extends StatelessWidget {
     final shadow = s.shadowEnabled
         ? [
             BoxShadow(
-              color: s.shadowColor.withOpacity(0.55),
+              color: s.shadowColor.withValues(alpha: 0.55),
               blurRadius: s.shadowBlur,
               offset: const Offset(0, 3),
             ),
@@ -327,7 +331,7 @@ class _StickerText extends StatelessWidget {
         shadows: s.shadowEnabled
             ? [
                 Shadow(
-                  color: s.shadowColor.withOpacity(0.55),
+                  color: s.shadowColor.withValues(alpha: 0.55),
                   blurRadius: s.shadowBlur,
                   offset: const Offset(0, 3),
                 ),
@@ -439,7 +443,7 @@ class _Handle extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

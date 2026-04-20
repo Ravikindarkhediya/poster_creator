@@ -42,7 +42,6 @@ class PosterCanvas extends StatefulWidget {
 
 class _PosterCanvasState extends State<PosterCanvas> {
   double? _aspectRatio;
-  bool _loaded = false;
 
   @override
   void initState() {
@@ -56,7 +55,6 @@ class _PosterCanvasState extends State<PosterCanvas> {
     super.didUpdateWidget(old);
     if (old.controller.templateUrl != widget.controller.templateUrl) {
       setState(() {
-        _loaded = false;
         _aspectRatio = null;
       });
       _resolveAspectRatio();
@@ -68,7 +66,6 @@ class _PosterCanvasState extends State<PosterCanvas> {
     if (url.isEmpty) {
       setState(() {
         _aspectRatio = 1.0;
-        _loaded = true;
       });
       return;
     }
@@ -83,13 +80,14 @@ class _PosterCanvasState extends State<PosterCanvas> {
         .addListener(
           ImageStreamListener(
             (info, _) {
-              if (!completer.isCompleted)
+              if (!completer.isCompleted) {
                 completer.complete(
                   Size(
                     info.image.width.toDouble(),
                     info.image.height.toDouble(),
                   ),
                 );
+              }
             },
             onError: (_, __) {
               if (!completer.isCompleted) completer.complete(const Size(1, 1));
@@ -101,7 +99,6 @@ class _PosterCanvasState extends State<PosterCanvas> {
     if (mounted) {
       setState(() {
         _aspectRatio = (size.width / size.height).clamp(0.5, 2.0);
-        _loaded = true;
       });
     }
   }
@@ -121,7 +118,7 @@ class _PosterCanvasState extends State<PosterCanvas> {
                 ? null
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 30,
                       offset: const Offset(0, 10),
                     ),
@@ -197,8 +194,8 @@ class _PosterCanvasState extends State<PosterCanvas> {
         fit: BoxFit.cover, // ← FULL WIDTH & HEIGHT COVER
         width: double.infinity,
         height: double.infinity,
-        placeholder: (_, __) => Container(color: Colors.grey.shade100),
-        errorWidget: (_, __, ___) => Container(
+        placeholder: (_, _) => Container(color: Colors.grey.shade100),
+        errorWidget: (_, _, _) => Container(
           color: Colors.grey.shade200,
           child: const Center(
             child: Icon(Icons.broken_image, color: Colors.grey),
@@ -246,8 +243,8 @@ class _PosterCanvasState extends State<PosterCanvas> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.white.withOpacity(0.98),
-              Colors.white.withOpacity(0.6),
+              Colors.white.withValues(alpha: 0.98),
+              Colors.white.withValues(alpha: 0.6),
             ],
           ),
         ),

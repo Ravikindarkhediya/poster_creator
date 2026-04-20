@@ -71,7 +71,7 @@ class PosterTextTab extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: editing ? _editPanel(context, sel!) : _emptyState(context),
+            child: editing ? _editPanel(context, sel) : _emptyState(context),
           ),
         );
       },
@@ -96,7 +96,7 @@ class PosterTextTab extends StatelessWidget {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: PosterTextStylePreset.all.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (_, i) {
             final p = PosterTextStylePreset.all[i];
             return GestureDetector(
@@ -144,7 +144,7 @@ class PosterTextTab extends StatelessWidget {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: PosterTextStylePreset.all.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (_, i) {
             final p = PosterTextStylePreset.all[i];
             final active = p.frameId == s.frameId;
@@ -230,7 +230,7 @@ class PosterTextTab extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 6.5,
                         color: isSel
-                            ? Colors.white.withOpacity(0.9)
+                            ? Colors.white.withValues(alpha: 0.9)
                             : Colors.grey.shade600,
                       ),
                       textAlign: TextAlign.center,
@@ -562,10 +562,10 @@ class PosterStickerTab extends StatelessWidget {
           ? CachedNetworkImage(
               imageUrl: url,
               fit: BoxFit.contain,
-              placeholder: (_, __) => const Center(
+              placeholder: (_, _) => const Center(
                 child: CircularProgressIndicator(strokeWidth: 1),
               ),
-              errorWidget: (_, __, ___) =>
+              errorWidget: (_, _, _) =>
                   const Icon(Icons.broken_image, size: 18),
             )
           : Image.file(File(url), fit: BoxFit.contain),
