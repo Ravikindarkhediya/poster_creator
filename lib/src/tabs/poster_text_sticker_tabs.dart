@@ -59,7 +59,6 @@ class PosterTextTab extends StatelessWidget {
     return ListenableBuilder(
       listenable: controller,
       builder: (_, __) {
-        final selId = controller.selectedStickerId;
         final sel = controller.selectedSticker;
         final editing =
             sel != null &&

@@ -279,7 +279,7 @@ class PosterColorTab extends StatelessWidget {
             );
           }
           final col = _palette[i - 1];
-          final isSel = col.value == active.value;
+          final isSel = col == active;
           return GestureDetector(
             onTap: () => onTap(col),
             child: Container(

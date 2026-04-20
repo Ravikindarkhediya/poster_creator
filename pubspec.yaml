@@ -1,6 +1,6 @@
 name: poster_creator
 description: "A Flutter package to create customizable posters with frames, stickers, text, and export functionality."
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/Ravikindarkhediya/poster_creator
 repository: https://github.com/Ravikindarkhediya/poster_creator
 
@@ -10,10 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cached_network_image: ^3.3.0
-  google_fonts: ^6.1.0
-  flutter_svg: ^2.0.9
-  path_provider: ^2.1.1
+  cached_network_image: ^3.4.1
+  google_fonts: ^8.0.2
+  flutter_svg: ^2.2.4
+  path_provider: ^2.1.5
   image_picker: ^1.2.1
   flutter_colorpicker: ^1.1.0
 
