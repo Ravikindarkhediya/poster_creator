@@ -1,0 +1,16 @@
+name: poster_creator_example
+description: Example app for poster_creator
+publish_to: 'none'
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  poster_creator:
+    path: ../
+
+flutter:
+  uses-material-design: true
